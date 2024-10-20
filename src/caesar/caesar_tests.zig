@@ -52,7 +52,7 @@ test "rotates back to start" {
     try testing.expectEqualStrings(result, "A");
 }
 
-test "key goes back to zero cipher" {
+test "key goes back to zero (cipher)" {
     var allocator = testing.allocator;
 
     const result1 = try cs.cipher("A", 26, &allocator);
@@ -68,4 +68,31 @@ test "key goes back to zero cipher" {
     try testing.expectEqualStrings(result2, "B");
     try testing.expectEqualStrings(result3, "Z");
     try testing.expectEqualStrings(result4, "A");
+}
+
+test "rotates to end" {
+    var allocator = testing.allocator;
+
+    const result = try cs.decipher("a", 1, &allocator);
+    defer allocator.free(result);
+
+    try testing.expectEqualStrings(result, "Z");
+}
+
+test "key goes back to zero (decipher)" {
+    var allocator = testing.allocator;
+
+    const result1 = try cs.decipher("A", 26, &allocator);
+    const result2 = try cs.decipher("A", 27, &allocator);
+    const result3 = try cs.decipher("Z", 26, &allocator);
+    const result4 = try cs.decipher("Z", 27, &allocator);
+    defer allocator.free(result1);
+    defer allocator.free(result2);
+    defer allocator.free(result3);
+    defer allocator.free(result4);
+
+    try testing.expectEqualStrings(result1, "A");
+    try testing.expectEqualStrings(result2, "Z");
+    try testing.expectEqualStrings(result3, "Z");
+    try testing.expectEqualStrings(result4, "Y");
 }
