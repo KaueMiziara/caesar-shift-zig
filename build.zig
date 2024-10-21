@@ -20,6 +20,9 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
     });
 
+    exe.linkLibC();
+    exe.linkSystemLibrary("gtk4");
+
     b.installArtifact(exe);
 
     const run_cmd = b.addRunArtifact(exe);
